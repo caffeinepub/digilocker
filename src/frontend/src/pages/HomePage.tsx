@@ -33,6 +33,19 @@ const ISO_LOGO =
 const INDIA_FLAG =
   "https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg";
 
+// Dynamic record map — update URLs here to add/change documents
+const VERIFIED_RECORDS: Record<
+  string,
+  { docType: string; label: string; documentUrl: string }
+> = {
+  "220504250731|Degree Certificate": {
+    docType: "Degree Certificate",
+    label: "Degree Verified",
+    documentUrl: "/degree-verified.html",
+  },
+  // Add more entries like: "ROLLNUMBER|10th Marksheet": { ... }
+};
+
 const slides = [
   { image: "/assets/generated/photo_digi1.png" },
   { image: "/assets/generated/photo_digi2.png" },
@@ -120,19 +133,15 @@ const issuers = [
 
 interface HomePageProps {
   onNavigateDashboard: () => void;
-  onNavigateCertificate: () => void;
 }
 
-export default function HomePage({
-  onNavigateDashboard,
-  onNavigateCertificate,
-}: HomePageProps) {
+export default function HomePage({ onNavigateDashboard }: HomePageProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [verifyDocType, setVerifyDocType] = useState("");
   const [verifyId, setVerifyId] = useState("");
   const [verifyResult, setVerifyResult] = useState<
-    null | "verified" | "pending" | "failed"
+    null | "failed" | { label: string; documentUrl: string; docType: string }
   >(null);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -176,13 +185,17 @@ export default function HomePage({
 
   const handleVerify = () => {
     if (!verifyDocType.trim() || !verifyId.trim()) return;
-    const rollNum = verifyId.trim();
-    if (rollNum === "220504250731") {
-      onNavigateCertificate();
+    const key = `${verifyId.trim()}|${verifyDocType}`;
+    const record = VERIFIED_RECORDS[key];
+    if (record) {
+      setVerifyResult({
+        label: record.label,
+        documentUrl: record.documentUrl,
+        docType: record.docType,
+      });
       return;
     }
-    if (rollNum.length >= 6) setVerifyResult("verified");
-    else setVerifyResult("failed");
+    setVerifyResult("failed");
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -635,7 +648,7 @@ export default function HomePage({
                   setVerifyResult(null);
                 }}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                data-ocid="verify.doc_type_select"
+                data-ocid="verify.select"
               >
                 <option value="">-- Select Document Type --</option>
                 {verifyDocumentTypes.map((type) => (
@@ -646,60 +659,120 @@ export default function HomePage({
               </select>
             </div>
 
-            {/* Roll Number Input */}
-            <div className="flex gap-3">
-              <Input
-                value={verifyId}
-                onChange={(e) => {
-                  setVerifyId(e.target.value);
-                  setVerifyResult(null);
-                }}
-                placeholder="Enter Roll Number"
-                className="flex-1"
-                data-ocid="verify.input"
-                onKeyDown={(e) => e.key === "Enter" && handleVerify()}
-              />
-              <Button
-                type="button"
-                onClick={handleVerify}
-                disabled={!verifyDocType}
-                style={{
-                  backgroundColor: verifyDocType ? "#003366" : undefined,
-                }}
-                className="text-white px-6"
-                data-ocid="verify.submit_button"
+            {/* Roll Number Input — only shown for Degree Certificate */}
+            {verifyDocType === "Degree Certificate" && (
+              <div className="flex gap-3">
+                <Input
+                  value={verifyId}
+                  onChange={(e) => {
+                    setVerifyId(e.target.value);
+                    setVerifyResult(null);
+                  }}
+                  placeholder="Enter Roll Number"
+                  className="flex-1"
+                  data-ocid="verify.input"
+                  onKeyDown={(e) => e.key === "Enter" && handleVerify()}
+                />
+                <Button
+                  type="button"
+                  onClick={handleVerify}
+                  style={{ backgroundColor: "#003366" }}
+                  className="text-white px-6"
+                  data-ocid="verify.submit_button"
+                >
+                  Verify
+                </Button>
+              </div>
+            )}
+
+            {/* For 10th / 12th — always show not verified */}
+            {(verifyDocType === "10th Marksheet" ||
+              verifyDocType === "12th Migration Marksheet") && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200"
+                data-ocid="verify.error_state"
               >
-                Verify
-              </Button>
-            </div>
+                ❌ Not Verified — Record Not Found.
+              </motion.div>
+            )}
+
             {!verifyDocType && verifyId && (
               <p className="mt-2 text-xs text-red-500">
                 Please select a document type first.
               </p>
             )}
+
             <AnimatePresence>
-              {verifyResult && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className={`mt-4 p-4 rounded-lg text-sm font-medium ${
-                    verifyResult === "verified"
-                      ? "bg-green-50 text-green-700 border border-green-200"
-                      : verifyResult === "pending"
-                        ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
-                        : "bg-red-50 text-red-700 border border-red-200"
-                  }`}
-                  data-ocid={`verify.${verifyResult}_state`}
-                >
-                  {verifyResult === "verified" &&
-                    `✅ Document Verified — This ${verifyDocType} is authentic and valid.`}
-                  {verifyResult === "pending" &&
-                    `⏳ Verification Pending — ${verifyDocType} is under review.`}
-                  {verifyResult === "failed" &&
-                    "❌ Verification Failed — Roll Number not found or invalid."}
-                </motion.div>
-              )}
+              {/* Failed state for Degree Certificate */}
+              {verifyResult === "failed" &&
+                verifyDocType === "Degree Certificate" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mt-4 p-4 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200"
+                    data-ocid="verify.error_state"
+                  >
+                    ❌ Not Verified — Record Not Found.
+                  </motion.div>
+                )}
+
+              {/* Success state — show verified banner + View Document button */}
+              {verifyResult !== null &&
+                verifyResult !== "failed" &&
+                typeof verifyResult === "object" && (
+                  <motion.div
+                    key="verify-success"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4 rounded-lg overflow-hidden border border-green-200"
+                    data-ocid="verify.success_state"
+                  >
+                    {/* Green success banner */}
+                    <div className="bg-green-50 px-4 py-3 border-b border-green-200">
+                      <p className="text-green-700 text-sm font-semibold">
+                        ✅ {verifyResult.label} — Record Verified Successfully.
+                      </p>
+                    </div>
+                    {/* Certificate type + action */}
+                    <div className="bg-white px-4 py-4 flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-0.5">
+                          Certificate Type
+                        </p>
+                        <p className="text-sm font-semibold gov-blue-text">
+                          {verifyResult.docType}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          window.open(
+                            verifyResult.documentUrl,
+                            "_blank",
+                            "noopener,noreferrer",
+                          )
+                        }
+                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-md text-white text-sm font-medium transition-colors"
+                        style={{ backgroundColor: "#003366" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#004488";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "#003366";
+                        }}
+                        data-ocid="verify.primary_button"
+                      >
+                        <ExternalLink size={15} />
+                        View Document
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
             </AnimatePresence>
           </div>
         </div>

@@ -1,14 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
-import CertificatePage from "./pages/CertificatePage";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<
-    "home" | "dashboard" | "certificate"
-  >("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "dashboard">("home");
   const { identity } = useInternetIdentity();
 
   useEffect(() => {
@@ -21,12 +18,7 @@ export default function App() {
     <>
       <Toaster />
       {currentPage === "home" ? (
-        <HomePage
-          onNavigateDashboard={() => setCurrentPage("dashboard")}
-          onNavigateCertificate={() => setCurrentPage("certificate")}
-        />
-      ) : currentPage === "certificate" ? (
-        <CertificatePage onBack={() => setCurrentPage("home")} />
+        <HomePage onNavigateDashboard={() => setCurrentPage("dashboard")} />
       ) : (
         <DashboardPage onNavigateHome={() => setCurrentPage("home")} />
       )}

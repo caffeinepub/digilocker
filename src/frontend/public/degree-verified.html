@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Degree Certificate — DigiLocker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6fb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .top-bar {
+      width: 100%;
+      background: #003366;
+      color: #fff;
+      font-size: 12px;
+      padding: 6px 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-bar img { height: 16px; }
+    header {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    header .logo-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #003366;
+      letter-spacing: -0.5px;
+    }
+    header .logo-text span { color: #F4811F; }
+    header .badge {
+      margin-left: auto;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #a5d6a7;
+      border-radius: 20px;
+      padding: 4px 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .container {
+      width: 100%;
+      max-width: 860px;
+      padding: 36px 16px 60px;
+    }
+    .cert-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #003366;
+      box-shadow: 0 4px 24px rgba(0,51,102,0.10);
+      overflow: hidden;
+    }
+    .cert-header {
+      background: linear-gradient(90deg, #003366 0%, #004488 100%);
+      color: #fff;
+      padding: 24px 32px 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .cert-header .emblem {
+      font-size: 48px;
+      line-height: 1;
+    }
+    .cert-header .title-block .main { font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
+    .cert-header .title-block .sub { font-size: 12px; color: #b3c8e8; margin-top: 3px; }
+    .cert-verified-strip {
+      background: #e8f5e9;
+      border-bottom: 1px solid #a5d6a7;
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+    .cert-body {
+      padding: 32px 32px 28px;
+    }
+    .cert-body .document-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #003366;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    .cert-body .document-subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+    .cert-body .divider {
+      width: 80px;
+      height: 3px;
+      background: #F4811F;
+      margin: 0 auto 28px;
+      border-radius: 2px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .cert-header { flex-direction: column; text-align: center; }
+    }
+    .info-item label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #888;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .info-item .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+    .seal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed #d0d8e4;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .seal-box {
+      background: #f0f4fa;
+      border: 1px solid #c8d8ee;
+      border-radius: 8px;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #555;
+    }
+    .seal-box .seal-label { font-weight: 700; color: #003366; font-size: 13px; }
+    .qr-placeholder {
+      width: 64px;
+      height: 64px;
+      background: #e8eef8;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 1px solid #c8d8ee;
+    }
+    .qr-placeholder .qr-label { font-size: 8px; color: #888; margin-top: 2px; }
+    footer {
+      background: #003366;
+      color: #a0b8d8;
+      text-align: center;
+      font-size: 12px;
+      padding: 16px;
+      width: 100%;
+      margin-top: auto;
+    }
+    footer a { color: #F4811F; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" alt="India Flag" />
+    Government of India &nbsp;|&nbsp; Ministry of Electronics &amp; IT (MeitY)
+  </div>
+
+  <header>
+    <div class="logo-text">Digi<span>Locker</span></div>
+    <div style="font-size:11px;color:#666;border-left:2px solid #e0e0e0;padding-left:14px;">
+      Issued Document &mdash; Degree Certificate
+    </div>
+    <div class="badge">&#10003;&nbsp; Digitally Verified</div>
+  </header>
+
+  <div class="container">
+    <div class="cert-card">
+      <div class="cert-header">
+        <div class="emblem">🏛️</div>
+        <div class="title-block">
+          <div class="main">DigiLocker — Official Document</div>
+          <div class="sub">Issued via National Academic Depository &bull; digilocker.gov.in</div>
+        </div>
+      </div>
+
+      <div class="cert-verified-strip">
+        &#10003;&nbsp; This document has been digitally issued and verified by DigiLocker.
+        It is legally equivalent to the original as per the IT Act, 2000.
+      </div>
+
+      <div class="cert-body">
+        <div class="document-title">Degree Certificate</div>
+        <div class="document-subtitle">Bachelor of Technology (B.Tech)</div>
+        <div class="divider"></div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Roll Number</label>
+            <div class="value">220504250731</div>
+          </div>
+          <div class="info-item">
+            <label>Document Type</label>
+            <div class="value">Degree Certificate</div>
+          </div>
+          <div class="info-item">
+            <label>Issuing Authority</label>
+            <div class="value">University Grants Commission</div>
+          </div>
+          <div class="info-item">
+            <label>Programme</label>
+            <div class="value">B.Tech — Computer Science &amp; Engineering</div>
+          </div>
+          <div class="info-item">
+            <label>Year of Passing</label>
+            <div class="value">2025</div>
+          </div>
+          <div class="info-item">
+            <label>DigiLocker Document ID</label>
+            <div class="value">DL-DEG-2025-220504250731</div>
+          </div>
+          <div class="info-item">
+            <label>Verification Status</label>
+            <div class="value" style="color:#2e7d32;">&#10003; Verified</div>
+          </div>
+          <div class="info-item">
+            <label>Date of Issue</label>
+            <div class="value">01 April 2025</div>
+          </div>
+        </div>
+
+        <div class="seal-row">
+          <div class="seal-box">
+            <div class="seal-label">🔒 Digitally Signed</div>
+            <div>National Academic Depository</div>
+            <div style="color:#F4811F;font-size:11px;margin-top:2px;">Ministry of Education, Govt. of India</div>
+          </div>
+          <div class="seal-box">
+            <div class="seal-label">📋 ISO Certified</div>
+            <div>ISO 27001:2022</div>
+            <div style="font-size:11px;margin-top:2px;">Information Security Management</div>
+          </div>
+          <div class="qr-placeholder">
+            <span>&#8726;&#9642;</span>
+            <div class="qr-label">QR Code</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; <script>document.write(new Date().getFullYear())</script> DigiLocker &bull;
+    Ministry of Electronics &amp; IT (MeitY) &bull; Government of India &bull;
+    <a href="https://digilocker.gov.in" target="_blank" rel="noopener">digilocker.gov.in</a>
+  </footer>
+</body>
+</html>
