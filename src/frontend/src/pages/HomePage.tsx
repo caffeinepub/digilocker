@@ -41,7 +41,8 @@ const VERIFIED_RECORDS: Record<
   "220504250731|Degree Certificate": {
     docType: "Degree Certificate",
     label: "Degree Verified",
-    documentUrl: "/degree-verified.html",
+    documentUrl:
+      "/assets/whatsapp_image_2026-03-25_at_11.10.12_am-019d48aa-5659-76bd-96da-5c0203b839e5.jpeg",
   },
   // Add more entries like: "ROLLNUMBER|10th Marksheet": { ... }
 };
