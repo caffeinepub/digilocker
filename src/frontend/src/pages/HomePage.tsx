@@ -42,7 +42,7 @@ const VERIFIED_RECORDS: Record<
     docType: "Degree Certificate",
     label: "Degree Verified",
     documentUrl:
-      "/assets/whatsapp_image_2026-03-25_at_11.10.12_am-019d48aa-5659-76bd-96da-5c0203b839e5.jpeg",
+      "/assets/degree_verified-019d48b4-e5b7-74db-a133-6ce10e2c96f8.jpeg",
   },
   // Add more entries like: "ROLLNUMBER|10th Marksheet": { ... }
 };
